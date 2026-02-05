@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
-const  cors = require('cors');
+const cors = require('cors');
 const app = express();
 const port = 3030;
 
@@ -12,7 +12,6 @@ const reviews_data = JSON.parse(fs.readFileSync("reviews.json", 'utf8'));
 const dealerships_data = JSON.parse(fs.readFileSync("dealerships.json", 'utf8'));
 
 mongoose.connect("mongodb://mongo_db:27017/",{'dbName':'dealershipsDB'});
-
 
 const Reviews = require('./review');
 
@@ -27,9 +26,8 @@ try {
   });
   
 } catch (error) {
-  res.status(500).json({ error: 'Error fetching documents' });
+    console.error('Error during database initialization:', error);
 }
-
 
 // Express route to home
 app.get('/', async (req, res) => {
@@ -88,9 +86,9 @@ app.get('/fetchDealer/:id', async (req, res) => {
 
 //Express route to insert review
 app.post('/insert_review', express.raw({ type: '*/*' }), async (req, res) => {
-  data = JSON.parse(req.body);
+  const data = JSON.parse(req.body);
   const documents = await Reviews.find().sort( { id: -1 } );
-  let new_id = documents[0].id;
+  let new_id = documents[0].id+1;
 
   const review = new Reviews({
 		"id": new_id,
